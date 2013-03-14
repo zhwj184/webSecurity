@@ -8,6 +8,11 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.websecurity.session.HttpSessionCookieStore;
+import org.websecurity.session.HttpSessionStore;
 
 /**
  * session´æ´¢ÔÚcookieÖÐ
@@ -16,23 +21,36 @@ import javax.servlet.ServletResponse;
  */
 public class HttpSessionCookitStoreFilter implements Filter{
 
+	private String key;
+
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 
 	@Override
-	public void doFilter(ServletRequest arg0, ServletResponse arg1,
-			FilterChain arg2) throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain filterChain) throws IOException, ServletException {
+		if (request instanceof HttpServletRequest
+				&& response instanceof HttpServletResponse) {
+			HttpServletRequest httpRequest = (HttpServletRequest) request;
+			HttpServletResponse httpResponse = (HttpServletResponse) response;
+			HttpSessionStore httpSessionStore = new HttpSessionCookieStore(httpRequest,httpResponse, key);
+			httpSessionStore.deseriable(httpRequest.getSession());
+			filterChain.doFilter(httpRequest, httpResponse);
+			httpSessionStore.seriable(httpRequest.getSession());
+			return ;
+		}
+		filterChain.doFilter(request, response);
 	}
 
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-		
+	public void init(FilterConfig filterConfig) throws ServletException {
+		String key = filterConfig.getInitParameter("encryKey");
+		if(key == null || key.length() != 16){
+			throw new ServletException("encrykey(" + key + ") length must be 16");
+		}
+		this.key = key;
 	}
 
 }

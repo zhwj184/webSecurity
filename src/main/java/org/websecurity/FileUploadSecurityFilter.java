@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.websecurity.config.SecurityConstant;
+
 /**
  * 文件上传安全过滤
  * @author weijian.zhongwj

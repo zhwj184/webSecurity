@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.websecurity.config.SecurityConstant;
+
 /**
  * cookie白名单过滤,输入输出cookie白名单验证过滤
  * @author weijian.zhongwj

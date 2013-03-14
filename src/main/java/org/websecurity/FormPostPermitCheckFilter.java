@@ -13,6 +13,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.websecurity.config.SecurityConstant;
+
 /**
  * 只允许表单post提交
  * @author weijian.zhongwj

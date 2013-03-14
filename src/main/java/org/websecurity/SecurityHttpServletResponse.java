@@ -6,11 +6,18 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.websecurity.util.ResponseHeaderSecurityCheck;
+import org.websecurity.util.XssUtil;
+
 /**
  * @author weijian.zhongwj
  *
  */
 public class SecurityHttpServletResponse extends HttpServletResponseWrapper{
+	
+	private static final int MAX_COOKIE_SIZE = 4 * 1024;
+	
+	private int length = 0;
 
 	public SecurityHttpServletResponse(HttpServletResponse response) {
 		super(response);
@@ -18,43 +25,44 @@ public class SecurityHttpServletResponse extends HttpServletResponseWrapper{
 	
 	@Override
 	public void addCookie(Cookie cookie) {
-		//cookie security filter
-		super.addCookie(cookie);
+		if(length + cookie.getValue().length() > MAX_COOKIE_SIZE){
+			//
+			return ;
+		}
+		super.addCookie(ResponseHeaderSecurityCheck.checkCookie(cookie));
+		length +=  cookie.getValue().length();
 	}
 	
 	@Override
 	public void setDateHeader(String name, long date) {
-		// header security filter
-		super.setDateHeader(name, date);
+		super.setDateHeader(ResponseHeaderSecurityCheck.filterCLRF(name), date);
 	}
 	@Override
 	public void setIntHeader(String name, int value) {
-		// header security filter
-		super.setIntHeader(name, value);
+		super.setIntHeader(ResponseHeaderSecurityCheck.filterCLRF(name), value);
 	}
 	
 	@Override
 	public void addHeader(String name, String value) {
-		// header security filter
-		super.addHeader(name, value);
+		super.addHeader(ResponseHeaderSecurityCheck.filterCLRF(name), XssUtil.xssFilter(ResponseHeaderSecurityCheck.filterCLRF(value), null));
 	}
 	
 	@Override
 	public void setHeader(String name, String value) {
-		// header security filter
-		super.setHeader(name, value);
+		super.setHeader(ResponseHeaderSecurityCheck.filterCLRF(name), XssUtil.xssFilter(ResponseHeaderSecurityCheck.filterCLRF(value), null));
 	}
 	
 	@Override
 	public void sendRedirect(String location) throws IOException {
-		// redirect security filter
+		if(!ResponseHeaderSecurityCheck.checkRedirectValid(location)){
+			throw new RuntimeException("redirect location " + location + " is not valid.");
+		}
 		super.sendRedirect(location);
 	}
 	
 	@Override
 	public void setStatus(int sc, String sm) {
-		//status security filter
-		super.setStatus(sc, sm);
+		super.setStatus(sc, XssUtil.xssFilter(sm, null));
 	}
 	
 

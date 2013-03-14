@@ -4,5 +4,7 @@ import javax.servlet.http.HttpSession;
 
 public interface HttpSessionStore {
 
-	public void store(HttpSession session);
+	public void seriable(HttpSession session);
+	
+	public void deseriable(HttpSession session);
 }

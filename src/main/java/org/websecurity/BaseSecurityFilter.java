@@ -11,7 +11,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * 
+ * @author weijian.zhongwj
+ *
+ */
 public class BaseSecurityFilter implements Filter{
 
 	@Override
