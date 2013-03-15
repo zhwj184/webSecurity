@@ -5,10 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -25,16 +22,8 @@ import org.websecurity.config.SecurityConstant;
 public class FileUploadSecurityFilter implements SecurityFilter{
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain filterChain) throws IOException, ServletException {
-		if (request instanceof HttpServletRequest
-				&& response instanceof HttpServletResponse) {
-			HttpServletRequest httpRequest = (HttpServletRequest) request;
-			HttpServletResponse httpResponse = (HttpServletResponse) response;
-			filterChain.doFilter(new UploadFileExtensionFilterHttpServletRequest(httpRequest), httpResponse);
-			return ;
-		}
-		filterChain.doFilter(request, response);
+	public void doFilterInvoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		request = new UploadFileExtensionFilterHttpServletRequest(request);
 	}
 	
 

@@ -2,15 +2,9 @@ package org.websecurity.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -28,17 +22,9 @@ import org.websecurity.config.SecurityConstant;
 public class CookieWhiteListFilter implements SecurityFilter{
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain filterChain) throws IOException, ServletException {
-		
-		if (request instanceof HttpServletRequest
-				&& response instanceof HttpServletResponse) {
-			HttpServletRequest httpRequest = (HttpServletRequest) request;
-			HttpServletResponse httpResponse = (HttpServletResponse) response;
-			filterChain.doFilter(new CookieWhiteFilterHttpServletRequest(httpRequest), new CookieWhiteFilterHttpServletResponse(httpResponse));
-			return ;
-		}
-		filterChain.doFilter(request, response);
+	public void doFilterInvoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		request = new CookieWhiteFilterHttpServletRequest(request);
+		response = new CookieWhiteFilterHttpServletResponse(response);
 	}
 
 
