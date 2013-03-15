@@ -1,14 +1,11 @@
-package org.websecurity;
+package org.websecurity.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -17,6 +14,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.websecurity.SecurityFilter;
 import org.websecurity.config.SecurityConstant;
 
 /**
@@ -24,13 +22,7 @@ import org.websecurity.config.SecurityConstant;
  * @author weijian.zhongwj
  *
  */
-public class FileUploadSecurityFilter implements Filter{
-
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
-	}
+public class FileUploadSecurityFilter implements SecurityFilter{
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
@@ -43,17 +35,6 @@ public class FileUploadSecurityFilter implements Filter{
 			return ;
 		}
 		filterChain.doFilter(request, response);
-	}
-
-
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		String list = filterConfig.getInitParameter("whitefilePostFixList");
-		if(list == null || list.isEmpty()){
-			return ;
-		}
-		String[] cookieList = list.split(",");
-		SecurityConstant.whitefilePostFixList.addAll(Arrays.asList(cookieList));
 	}
 	
 

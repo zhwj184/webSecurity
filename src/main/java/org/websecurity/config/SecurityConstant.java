@@ -13,5 +13,7 @@ public class SecurityConstant {
 	public static final List<String> whitefilePostFixList = new ArrayList<String>();
 	
 	public static final List<Pattern> redirectLocationWhiteList = new ArrayList<Pattern>();
+	
+	public static String  key;
 
 }

@@ -1,18 +1,16 @@
-package org.websecurity;
+package org.websecurity.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.websecurity.SecurityFilter;
 import org.websecurity.config.SecurityConstant;
 
 /**
@@ -20,13 +18,7 @@ import org.websecurity.config.SecurityConstant;
  * @author weijian.zhongwj
  *
  */
-public class FormPostPermitCheckFilter implements Filter{
-
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
-	}
+public class FormPostPermitCheckFilter implements SecurityFilter{
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
@@ -52,16 +44,6 @@ public class FormPostPermitCheckFilter implements Filter{
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		String list = filterConfig.getInitParameter("onlyPostUrlList");
-		if(list == null || list.isEmpty()){
-			return ;
-		}
-		String[] onlyPostUrlList = list.split(",");
-		SecurityConstant.onlyPostUrlList.addAll(Arrays.asList(onlyPostUrlList));
 	}
 
 }

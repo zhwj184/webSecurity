@@ -1,4 +1,4 @@
-package org.websecurity;
+package org.websecurity.filter;
 
 import java.io.IOException;
 
@@ -11,18 +11,19 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.websecurity.SecurityFilter;
+import org.websecurity.session.HttpSessionCookieStore;
+import org.websecurity.session.HttpSessionStore;
+
 /**
- * 
+ * session´æ´¢ÔÚcookieÖÐ
  * @author weijian.zhongwj
  *
  */
-public class BaseSecurityFilter implements Filter{
+public class HttpSessionCookitStoreFilter implements SecurityFilter{
 
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
-	}
+	private String key;
+
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
@@ -31,17 +32,13 @@ public class BaseSecurityFilter implements Filter{
 				&& response instanceof HttpServletResponse) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
-			filterChain.doFilter(new SecurityHttpServletRequest(httpRequest), new SecurityHttpServletResponse(httpResponse));
+			HttpSessionStore httpSessionStore = new HttpSessionCookieStore(httpRequest,httpResponse, key);
+			httpSessionStore.deseriable(httpRequest.getSession());
+			filterChain.doFilter(httpRequest, httpResponse);
+			httpSessionStore.seriable(httpRequest.getSession());
 			return ;
 		}
 		filterChain.doFilter(request, response);
-		
-	}
-
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

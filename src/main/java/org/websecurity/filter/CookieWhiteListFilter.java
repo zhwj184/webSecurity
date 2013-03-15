@@ -1,4 +1,4 @@
-package org.websecurity;
+package org.websecurity.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.websecurity.SecurityFilter;
 import org.websecurity.config.SecurityConstant;
 
 /**
@@ -24,12 +25,7 @@ import org.websecurity.config.SecurityConstant;
  * @author weijian.zhongwj
  *
  */
-public class CookieWhiteListFilter implements Filter{
-
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub		
-	}
+public class CookieWhiteListFilter implements SecurityFilter{
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
@@ -45,15 +41,7 @@ public class CookieWhiteListFilter implements Filter{
 		filterChain.doFilter(request, response);
 	}
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		String list = filterConfig.getInitParameter("cookieWhiteList");
-		if(list == null || list.isEmpty()){
-			return ;
-		}
-		String[] cookieList = list.split(",");
-		SecurityConstant.cookieWhiteList.addAll(Arrays.asList(cookieList));
-	}
+
 	private Cookie[] filter(Cookie[] cookies) {
 		if(cookies == null || cookies.length == 0){
 			return null;

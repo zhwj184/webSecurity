@@ -1,4 +1,4 @@
-package org.websecurity;
+package org.websecurity.filter;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -13,16 +13,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class CsrfTokenCkeckFilter implements Filter{
+import org.websecurity.SecurityFilter;
+
+public class CsrfTokenCkeckFilter implements SecurityFilter{
 	
 	
 	private static final String CSRFTOKEN_PREFIX = "csrf_";
-
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
@@ -52,11 +48,6 @@ public class CsrfTokenCkeckFilter implements Filter{
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
 	}
 
 }
