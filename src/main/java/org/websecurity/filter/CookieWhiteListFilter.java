@@ -9,7 +9,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.websecurity.SecurityFilter;
 import org.websecurity.config.SecurityConstant;
@@ -24,10 +23,21 @@ public class CookieWhiteListFilter implements SecurityFilter{
 	@Override
 	public void doFilterInvoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		request = new CookieWhiteFilterHttpServletRequest(request);
-		response = new CookieWhiteFilterHttpServletResponse(response);
 	}
+	
+	public class CookieWhiteFilterHttpServletRequest extends HttpServletRequestWrapper{
 
+		public CookieWhiteFilterHttpServletRequest(HttpServletRequest request) {
+			super(request);
+		}
 
+		@Override
+		public Cookie[] getCookies() {
+			return filter(super.getCookies());
+		}
+
+	}
+	
 	private Cookie[] filter(Cookie[] cookies) {
 		if(cookies == null || cookies.length == 0){
 			return null;
@@ -50,34 +60,6 @@ public class CookieWhiteListFilter implements SecurityFilter{
 			}
 		}
 		return false;
-	}
-	
-	public class CookieWhiteFilterHttpServletRequest extends HttpServletRequestWrapper{
-
-		public CookieWhiteFilterHttpServletRequest(HttpServletRequest request) {
-			super(request);
-		}
-
-		@Override
-		public Cookie[] getCookies() {
-			return filter(super.getCookies());
-		}
-
-	}
-	
-	public class CookieWhiteFilterHttpServletResponse extends HttpServletResponseWrapper{
-
-		public CookieWhiteFilterHttpServletResponse(HttpServletResponse response) {
-			super(response);
-		}
-		
-		@Override
-		public void addCookie(Cookie cookie) {
-			if(!isInWhiteList(cookie)){
-				throw new RuntimeException("cookie:" + cookie.getName() + " is not in whitelist,not valid.");
-			}
-			super.addCookie(cookie);
-		}	
 	}
 
 }

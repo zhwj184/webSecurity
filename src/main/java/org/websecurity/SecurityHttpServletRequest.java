@@ -1,6 +1,8 @@
 package org.websecurity;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,9 +11,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.Part;
 
+import org.websecurity.config.SecurityConstant;
 import org.websecurity.util.XssUtil;
 import org.websecurity.util.XssUtil.XssFilterTypeEnum;
 
@@ -58,11 +63,46 @@ public class SecurityHttpServletRequest extends HttpServletRequestWrapper{
 		if(value == null || value.length == 0){
 			return value;
 		}
-		List<String> resValueList = Arrays.asList(value);
+		List<String> resValueList = new ArrayList<String>();
 		for(String val: value){
 			resValueList.add(XssUtil.xssFilter(val,null));
 		}
 		return resValueList.toArray(new String[resValueList.size()]);
+	}
+	
+	/**
+	 * 文件上传安全过滤
+	 */
+	@Override
+	public Collection<Part> getParts() throws IOException, ServletException {
+		Collection<Part> parts = super.getParts();
+		if(parts == null || parts.isEmpty() ||  SecurityConstant.whitefilePostFixList == null ||  SecurityConstant.whitefilePostFixList.isEmpty()){
+			return parts;
+		}
+		List<Part> resParts = new ArrayList<Part>();
+		for(Part part: parts){
+			for(String extension: SecurityConstant.whitefilePostFixList){
+				if(part.getName().toUpperCase().endsWith(extension)){
+					resParts.add(part);
+				}
+			}
+		}
+		return resParts;
+	}
+	@Override
+	public Part getPart(String name) throws IOException, ServletException {
+		Part part = super.getPart(name);
+		if(SecurityConstant.whitefilePostFixList == null ||  SecurityConstant.whitefilePostFixList.isEmpty()){
+			return part;
+		}
+		String value = part.getHeader("content-disposition");
+		String filename = value.substring(value.lastIndexOf("=") + 2,value.length() - 1);
+		for(String extension: SecurityConstant.whitefilePostFixList){
+			if(filename.toUpperCase().endsWith(extension.toUpperCase())){
+				return part;
+			}
+		}
+		return null;
 	}
 
 }

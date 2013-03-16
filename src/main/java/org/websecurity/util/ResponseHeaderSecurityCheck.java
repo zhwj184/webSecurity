@@ -25,7 +25,9 @@ public class ResponseHeaderSecurityCheck {
 		String newValue = filterCLRF(value);
 		Cookie newCookie = new Cookie(name,newValue);
 		newCookie.setComment(inputCookie.getComment());
-		newCookie.setDomain(inputCookie.getDomain());
+		if(inputCookie.getDomain() != null){
+			newCookie.setDomain(inputCookie.getDomain());
+		}
 		if(ClassUtil.checkIfExsit(Cookie.class, "setHttpOnly") && ClassUtil.checkIfExsit(Cookie.class, "isHttpOnly")){
 			newCookie.setHttpOnly(inputCookie.isHttpOnly());	
 		}
@@ -42,10 +44,10 @@ public class ResponseHeaderSecurityCheck {
 		}
 		for(int i = 0; i < name.length(); i++){
 			if(name.charAt(i) == '\r' || name.charAt(i) == '\n'){
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	public static String filterCLRF(String value){

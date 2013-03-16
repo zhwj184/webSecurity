@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,7 +39,7 @@ public class DefaultBaseSecurityFilter implements Filter{
 				&& response instanceof HttpServletResponse) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
-			for(int i = 0; i < securityFilterList.size() - 1; i++){
+			for(int i = 0; i < securityFilterList.size(); i++){
 				securityFilterList.get(i).doFilterInvoke(httpRequest, httpResponse);
 			}
 			filterChain.doFilter(new SecurityHttpServletRequest(httpRequest), new SecurityHttpServletResponse(httpResponse));
@@ -53,7 +54,6 @@ public class DefaultBaseSecurityFilter implements Filter{
 		initCookieWhiteList(filterConfig);
 		initWhitefilePostFixList(filterConfig);
 		initOnlyPostUrlList(filterConfig);
-		initCookieStoreEncryKey(filterConfig);
 		try {
 			initSecurityFilterList(filterConfig);
 		} catch (ClassNotFoundException e) {
@@ -91,16 +91,22 @@ public class DefaultBaseSecurityFilter implements Filter{
 		String[] onlyPostUrlList = list.split(",");
 		SecurityConstant.onlyPostUrlList.addAll(Arrays.asList(onlyPostUrlList));
 	}
-
-
-	public void initCookieStoreEncryKey(FilterConfig filterConfig) throws ServletException {
-		String key = filterConfig.getInitParameter("encryKey");
-		if(key == null || key.length() != 16){
-			throw new ServletException("encrykey(" + key + ") length must be 16");
-		}
-		SecurityConstant.key = key;
-	}
 	
+	public void initRedictWhiteList(FilterConfig filterConfig) throws ServletException {
+		String list = filterConfig.getInitParameter("redirectWhiteList");
+		if(list == null || list.isEmpty()){
+			return ;
+		}
+		String[] redirectWhiteList = list.split(",");
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		for(String str: redirectWhiteList){
+			patterns.add(Pattern.compile(str));
+		}
+		SecurityConstant.redirectLocationWhiteList.addAll(patterns);
+	}
+
+
+
 	private void initSecurityFilterList(FilterConfig filterConfig) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		String securityFilterS = filterConfig.getInitParameter("securityFilterList");
 		if(securityFilterS == null || securityFilterS.isEmpty()){

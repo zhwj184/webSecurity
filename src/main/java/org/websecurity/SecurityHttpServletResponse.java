@@ -6,6 +6,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.websecurity.config.SecurityConstant;
 import org.websecurity.util.ResponseHeaderSecurityCheck;
 import org.websecurity.util.XssUtil;
 
@@ -28,6 +29,9 @@ public class SecurityHttpServletResponse extends HttpServletResponseWrapper{
 		if(length + cookie.getValue().length() > MAX_COOKIE_SIZE){
 			//
 			return ;
+		}
+		if(!isInWhiteList(cookie)){
+			throw new RuntimeException("cookie:" + cookie.getName() + " is not in whitelist,not valid.");
 		}
 		super.addCookie(ResponseHeaderSecurityCheck.checkCookie(cookie));
 		length +=  cookie.getValue().length();
@@ -63,7 +67,17 @@ public class SecurityHttpServletResponse extends HttpServletResponseWrapper{
 	@Override
 	public void setStatus(int sc, String sm) {
 		super.setStatus(sc, XssUtil.xssFilter(sm, null));
+	}	
+	private boolean isInWhiteList(Cookie cookie) {
+		if(cookie == null || cookie.getName() == null){
+			return false;
+		}
+		for(String name : SecurityConstant.cookieWhiteList){
+			if(name.equalsIgnoreCase(cookie.getName())){
+				return true;
+			}
+		}
+		return false;
 	}
-	
 
 }

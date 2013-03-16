@@ -55,6 +55,7 @@ public class HttpSessionCookieStore implements HttpSessionStore{
 						session.setAttribute(param[0], param[1]);
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -71,6 +72,7 @@ public class HttpSessionCookieStore implements HttpSessionStore{
 		try {
 			httpServletResponse.addCookie(getCookie(AESUtil.Encrypt(sb.toString(), key)));
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
