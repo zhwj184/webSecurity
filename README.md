@@ -5,7 +5,7 @@ web安全框架,主要用servlet filter方式覆盖httpServletRequest和HttpServ
 
 主要实现的安全包括：
 
-1. XSS过滤（获取用户输入参数和参数值进行XSS过滤，对Header和cookie value值进行XSS过滤（转码<Script>标签的< > 符号），
+1. XSS过滤（获取用户输入参数和参数值进行XSS过滤，对Header和cookie value值进行XSS过滤（转码Script标签的< > 符号），
 
 2. 对Response的setStatus(int sc, String sm)方法 sm错误信息进行XSS过滤；
 
